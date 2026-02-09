@@ -1,3 +1,17 @@
+# Logs/Temp Files
 *.log
 /temp
+
+# macOS System Files
+.DS_Store
+
+# Build Artifacts
 build/
+cls/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+out/
+gen/
