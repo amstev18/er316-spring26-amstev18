@@ -40,62 +40,62 @@ Do **not** put everything into one table.
 
 ### Your EP Tables (add as many as needed)
 
-### Table 1: Patron Exists
+### Table 2: Patron Exists
 | Partition ID | State  | Valid/Invalid | Input Condition | Expected Return | Expected Behavior    |
 |--------------|--------|---------------|-----------------|-----------------|----------------------|
-| EP 1.1       | Null   | Invalid       | patron == null  | 3.1             | Checkout Rejected    |
-| EP 1.2       | Exists | Valid         | patron != null  | Success         | Continues validation |
+| EP 2.1       | Null   | Invalid       | patron == null  | 3.1             | Checkout Rejected    |
+| EP 2.2       | Exists | Valid         | patron != null  | Success         | Continues validation |
 
-### Table 2: Patron Account
+### Table 3: Patron Account
 | Partition ID | State     | Valid/Invalid | Input Condition                      | Expected Return | Expected Behavior   |
 |--------------|-----------|---------------|--------------------------------------|-----------------|---------------------|
-| EP 2.1       | Suspended | Invalid       | patron.isAccountSuspended() == true  | 3.0             | Checkout Rejected   |
-| EP 2.2       | Active    | Valid         | patron.isAccountSuspended() == false | Success         | Continues validaion |
+| EP 3.1       | Suspended | Invalid       | patron.isAccountSuspended() == true  | 3.0             | Checkout Rejected   |
+| EP 3.2       | Active    | Valid         | patron.isAccountSuspended() == false | Success         | Continues validaion |
 
-### Table 3: Patron Overdue
+### Table 4: Patron Overdue
 | Partition ID | State       | Valid/Invalid | Input Condition                        | Expected Return | Expected Behavior             |
-|-----------|-------------|---------------|----------------------------------------|-----------------|-------------------------------|
-| EP 3.1    | 0 overdue   | Valid         | overdueCount == 0                      | Success         | Checkout Succeed              |
-| EP 3.2    | 1-2 overdue | Valid         | overdueCount >= 1 && overdueCount <= 2 | 1.0             | Checkout Succeed with warning |
-| EP 3.3    | 3+ overdue  | Invalid       | overdueCount > 2                       | 4.0             | Checkout Rejected             |
+|--------------|-------------|---------------|----------------------------------------|-----------------|-------------------------------|
+| EP 4.1       | 0 overdue   | Valid         | overdueCount == 0                      | Success         | Checkout Succeed              |
+| EP 4.2       | 1-2 overdue | Valid         | overdueCount >= 1 && overdueCount <= 2 | 1.0             | Checkout Succeed with warning |
+| EP 4.3       | 3+ overdue  | Invalid       | overdueCount > 2                       | 4.0             | Checkout Rejected             |
 
-### Table 4: Patron Fines
+### Table 5: Patron Fines
 | Partition ID | State       | Valid/Invalid | Input Condition     | Expected Return | Expected Behavior |
 |--------------|-------------|---------------|---------------------|-----------------|------------------|
-| EP 4.1       | No fines    | Valid         | fineBalance == 0.0  | Success         | Checkout Succeed |
-| EP 4.2       | Fines < 10  | Valid         | fineBalance < 10.0  | Success         | Checkout Succeed |
-| EP 4.3       | Fines >= 10 | Invalid       | fineBalance >= 10.0 | 4.1             | Checkout Rejected |
+| EP 5.1       | No fines    | Valid         | fineBalance == 0.0  | Success         | Checkout Succeed |
+| EP 5.2       | Fines < 10  | Valid         | fineBalance < 10.0  | Success         | Checkout Succeed |
+| EP 5.3       | Fines >= 10 | Invalid       | fineBalance >= 10.0 | 4.1             | Checkout Rejected |
 
-### Table 5: Checkout Limit
+### Table 6: Checkout Limit
 | Partition ID | State       | Valid/Invalid | Input Condition                                     | Expected Return | Expected Behavior              |
 |--------------|-------------|---------------|-----------------------------------------------------|-----------------|--------------------------------|
-| EP 5.1       | Below limit | Valid         | checkoutCount < limit - 2                           | Success         | Checkout Succeeds              |
-| EP 5.2       | Within 2    | Valid         | checkoutCount >= limit - 2 && checkoutCount < limit | 1.1             | Checkout Succeeds with warning |
-| EP 5.3       | At limit    | Invalid       | checkoutCount >= limit                              | 3.2             | Checkout Rejected              |
+| EP 6.1       | Below limit | Valid         | checkoutCount < limit - 2                           | Success         | Checkout Succeeds              |
+| EP 6.2       | Within 2    | Valid         | checkoutCount >= limit - 2 && checkoutCount < limit | 1.1             | Checkout Succeeds with warning |
+| EP 6.3       | At limit    | Invalid       | checkoutCount >= limit                              | 3.2             | Checkout Rejected              |
 
-### Table 6: Book Exists
+### Table 7: Book Exists
 | Partition ID | State  | Valid/Invalid | Input Condition | Expected Return | Expected Behavior    |
 |--------------|--------|---------------|-----------------|-----------------|----------------------|
-| EP 6.1       | Null   | Invalid       | book == null    | 2.1             | Checkout Rejected    |
-| EP 6.2       | Exists | Valid         | book != null    | Success         | Continues Validation |
+| EP 7.1       | Null   | Invalid       | book == null    | 2.1             | Checkout Rejected    |
+| EP 7.2       | Exists | Valid         | book != null    | Success         | Continues Validation |
 
-### Table 7: Book Type
+### Table 8: Book Type
 | Partition ID | State              | Valid/Invalid | Input Condition                 | Expected Return | Expected Behavior    |
 |--------------|--------------------|---------------|---------------------------------|-----------------|----------------------|
-| EP 7.1       | Reference only     | Invalid       | book.isReferenceOnly() == true  | 5.0             | Checkout Rejected    |
-| EP 7.2       | Not Reference only | Valid         | book.isReferenceOnly() == false | Success         | Continues Validation |       | Continues Validation |
+| EP 8.1       | Reference only     | Invalid       | book.isReferenceOnly() == true  | 5.0             | Checkout Rejected    |
+| EP 8.2       | Not Reference only | Valid         | book.isReferenceOnly() == false | Success         | Continues Validation |
 
-### Table 8: Book Availability
+### Table 9: Book Availability
 | Partition ID | State            | Valid/Invalid | Input Condition                | Expected Return | Expected Behavior    |
 |--------------|------------------|---------------|--------------------------------|-----------------|----------------------|
-| EP 8.1       | 0 copies         | Invalid       | book.getAvailableCopies() <= 0 | 2.0             | Checkout Rejected    |
-| EP 8.2       | 1 or more copies | Valid         | book.getAvailableCopies() > 0  | Success         | Continues Validation |
+| EP 9.1       | 0 copies         | Invalid       | book.getAvailableCopies() <= 0 | 2.0             | Checkout Rejected    |
+| EP 9.2       | 1 or more copies | Valid         | book.getAvailableCopies() > 0  | Success         | Continues Validation |
 
-### Table 9: Renewal
+### Table 10: Renewal
 | Partition ID | State             | Valid/Invalid | Input Condition                                   | Expected Return | Expected Behavior |
 |--------------|-------------------|---------------|---------------------------------------------------|-----------------|-------------------|
-| EP 9.1       | Has Book          | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == true  | 0.1             | Due date updated  |
-| EP 9.2       | Doesn't Have Book | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == false | Success         | Checkout Success  |
+| EP 10.1      | Has Book          | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == true  | 0.1             | Due date updated  |
+| EP 10.2      | Doesn't Have Book | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == false | Success         | Checkout Success  |
 
 ---
 
@@ -116,9 +116,27 @@ Important BVA cases may overlap with EP. That is OK. You can reference all relev
 
 ### Your BVA Tables (add more as needed)
 
-| Test ID | Boundary | Input Value | Expected Return | Rationale |
-|---------|----------|-------------|-----------------|-----------|
-| BVA ___ | | | | |
+### Table 2: Fine Balance
+| Test ID | Boundary     | Input Value         | Expected Return | Rationale                   |
+|---------|--------------|---------------------|-----------------|-----------------------------|
+| BVA 2.1 | Below        | fineBalance = 0     | Success         | Success                     |
+| BVA 2.2 | Warning High | fineBalance = 9.99  | Success         | Just below reject threshold |
+| BVA 2.3 | At           | fineBalance = 10.00 | 4.1             | At rejection threshold      |
+| BVA 2.3 | Above        | fineBalance = 10.01 | 4.1             | Above rejection threshold   |
+
+### Table 3: Checkout Limit (for student)
+| Test ID | Boundary     | Input Value        | Expected Return | Rationale                      |
+|---------|--------------|--------------------|-----------------|--------------------------------|
+| BVA 3.1 | Below        | checkoutCount = 7  | Success         | Success                        |
+| BVA 3.2 | Warning High | checkoutCount = 9  | 1.1             | Just below rejection threshold |
+| BVA 3.3 | At           | checkoutCount = 10 | 3.2             | At rejection threshold         |
+| BVA 3.4 | Above        | checkoutCount = 11 | 3.2             | Above rejection threshold      |
+
+### Table 4: Book Availability
+| Test ID | Boundary | Input Value         | Expected Return | Rationale |
+|---------|----------|---------------------|-----------------|-----------|
+| BVA 4.1 | Zero     | availableCopies = 0 | 2.0             | No copies |
+| BVA 4.2 | Above    | availableCopies = 1 | Success         | Success   |
 
 ---
 
