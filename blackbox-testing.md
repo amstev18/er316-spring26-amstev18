@@ -40,9 +40,62 @@ Do **not** put everything into one table.
 
 ### Your EP Tables (add as many as needed)
 
-| Partition ID | State | Valid/Invalid | Input Condition | Expected Return | Expected Behavior |
-|--------------|-------|---------------|----------------|-----------------|------------------|
-| EP ___ | | | | | |
+### Table 1: Patron Exists
+| Partition ID | State  | Valid/Invalid | Input Condition | Expected Return | Expected Behavior    |
+|--------------|--------|---------------|-----------------|-----------------|----------------------|
+| EP 1.1       | Null   | Invalid       | patron == null  | 3.1             | Checkout Rejected    |
+| EP 1.2       | Exists | Valid         | patron != null  | Success         | Continues validation |
+
+### Table 2: Patron Account
+| Partition ID | State     | Valid/Invalid | Input Condition                      | Expected Return | Expected Behavior   |
+|--------------|-----------|---------------|--------------------------------------|-----------------|---------------------|
+| EP 2.1       | Suspended | Invalid       | patron.isAccountSuspended() == true  | 3.0             | Checkout Rejected   |
+| EP 2.2       | Active    | Valid         | patron.isAccountSuspended() == false | Success         | Continues validaion |
+
+### Table 3: Patron Overdue
+| Partition ID | State       | Valid/Invalid | Input Condition                        | Expected Return | Expected Behavior             |
+|-----------|-------------|---------------|----------------------------------------|-----------------|-------------------------------|
+| EP 3.1    | 0 overdue   | Valid         | overdueCount == 0                      | Success         | Checkout Succeed              |
+| EP 3.2    | 1-2 overdue | Valid         | overdueCount >= 1 && overdueCount <= 2 | 1.0             | Checkout Succeed with warning |
+| EP 3.3    | 3+ overdue  | Invalid       | overdueCount > 2                       | 4.0             | Checkout Rejected             |
+
+### Table 4: Patron Fines
+| Partition ID | State       | Valid/Invalid | Input Condition     | Expected Return | Expected Behavior |
+|--------------|-------------|---------------|---------------------|-----------------|------------------|
+| EP 4.1       | No fines    | Valid         | fineBalance == 0.0  | Success         | Checkout Succeed |
+| EP 4.2       | Fines < 10  | Valid         | fineBalance < 10.0  | Success         | Checkout Succeed |
+| EP 4.3       | Fines >= 10 | Invalid       | fineBalance >= 10.0 | 4.1             | Checkout Rejected |
+
+### Table 5: Checkout Limit
+| Partition ID | State       | Valid/Invalid | Input Condition                                     | Expected Return | Expected Behavior              |
+|--------------|-------------|---------------|-----------------------------------------------------|-----------------|--------------------------------|
+| EP 5.1       | Below limit | Valid         | checkoutCount < limit - 2                           | Success         | Checkout Succeeds              |
+| EP 5.2       | Within 2    | Valid         | checkoutCount >= limit - 2 && checkoutCount < limit | 1.1             | Checkout Succeeds with warning |
+| EP 5.3       | At limit    | Invalid       | checkoutCount >= limit                              | 3.2             | Checkout Rejected              |
+
+### Table 6: Book Exists
+| Partition ID | State  | Valid/Invalid | Input Condition | Expected Return | Expected Behavior    |
+|--------------|--------|---------------|-----------------|-----------------|----------------------|
+| EP 6.1       | Null   | Invalid       | book == null    | 2.1             | Checkout Rejected    |
+| EP 6.2       | Exists | Valid         | book != null    | Success         | Continues Validation |
+
+### Table 7: Book Type
+| Partition ID | State              | Valid/Invalid | Input Condition                 | Expected Return | Expected Behavior    |
+|--------------|--------------------|---------------|---------------------------------|-----------------|----------------------|
+| EP 7.1       | Reference only     | Invalid       | book.isReferenceOnly() == true  | 5.0             | Checkout Rejected    |
+| EP 7.2       | Not Reference only | Valid         | book.isReferenceOnly() == false | Success         | Continues Validation |       | Continues Validation |
+
+### Table 8: Book Availability
+| Partition ID | State            | Valid/Invalid | Input Condition                | Expected Return | Expected Behavior    |
+|--------------|------------------|---------------|--------------------------------|-----------------|----------------------|
+| EP 8.1       | 0 copies         | Invalid       | book.getAvailableCopies() <= 0 | 2.0             | Checkout Rejected    |
+| EP 8.2       | 1 or more copies | Valid         | book.getAvailableCopies() > 0  | Success         | Continues Validation |
+
+### Table 9: Renewal
+| Partition ID | State             | Valid/Invalid | Input Condition                                   | Expected Return | Expected Behavior |
+|--------------|-------------------|---------------|---------------------------------------------------|-----------------|-------------------|
+| EP 9.1       | Has Book          | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == true  | 0.1             | Due date updated  |
+| EP 9.2       | Doesn't Have Book | Valid         | patron.hasBookCheckedOut(book.getIsbn()) == false | Success         | Checkout Success  |
 
 ---
 
