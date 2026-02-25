@@ -1,7 +1,7 @@
 # Code Review Checklist
 
-**Reviewer Name:** [Your Name]
-**Date:** [Date]
+**Reviewer Name:** Aiden Stevens
+**Date:** 2/24/26
 **Branch:** Review
 
 ## Instructions
@@ -20,18 +20,18 @@ Review ALL source files (in main not test) in the project and identify defects u
 
 ## Defect Log
 
-| Defect ID | File | Line(s) | Category | Description | Severity |
-|-----------|------|---------|----------|-------------|----------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
-| 6 | | | | | |
-| 7 | | | | | |
-| 8 | | | | | |
-| 9 | | | | | |
-| 10 | | | | | |
+| Defect ID | File         | Line(s) | Category | Description                                            | Severity |
+|-----------|--------------|---------|----------|--------------------------------------------------------|----------|
+| 1 | Patron.java  | 151     | CG       | Else statment has <br/>no body                         | Medium   |
+| 2 | Checkout.java | 246     | FD       | Comparing strings with '==' instead of .equals()       | High     |
+| 3 | Patron.java  | 130     | CS       | The naming convention confusing, should be isSuspended | Low      |
+| 4 | Checkout.java | 15      | CG       | bookList is a Map not a list                           | Low      |
+| 5 | Book.java    | 1       | CS       | ArrayList and List imports aren't used                  | Low      |
+| 6 |              |         |          |                                                        |          |
+| 7 |              |         |          |                                                        |          |
+| 8 |              |         |          |                                                        |          |
+| 9 |              |         |          |                                                        |          |
+| 10 |              |         |          |                                                        |          |
 
 **Severity Levels:**
 - **Critical**: Causes system failure, data corruption, or security issues
