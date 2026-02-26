@@ -182,8 +182,30 @@ At least some of your tests should verify observable state changes, not just ret
 
 ### Easter Eggs Found
 List any easter egg messages you observed:
-- 
-- 
+- "Some bugs only appear under specific conditions."
+- "Testing can show the presence of bugs,"
+- "but never their absence"
+- "- Dijkstra"
+- "Limits exist to be thoroughly tested."
+- "Boundaries are where bugs hide."
+- "The difference between theory and practice is that in theory, there is no difference."
+- "Renew, reuse, recycle... books."
+- "A book renewed is a book re-loved."
+- "Renewing a book is like giving it a second chance."
+- "https://www.youtube.com/watch?v=xvFZjo5PgG0"
+- "...xvFZjo5PgG0 (test renewal to complete!)"
+- "The happy path matters too."
+- "Null checking: because null pointer exceptions are not fun."
+- "Remember to test all the edge cases."
+- "The best code is no code at all... but this isn't it."
+- "Availability testing finds the books that aren't there."
+- "Can't check out what isn't there."
+- "Good EP testing checks all partitions."
+- "Testing the sad path matters."
+- "Reference books are meant to be consulted, not carried home."
+- "These books stay home."
+- "Reference materials: look but don't touch."
+- "Stay in the library, book!"
 
 ### Implementation Results
 
@@ -198,16 +220,23 @@ List any easter egg messages you observed:
 List distinct bugs you identified for each implementation. Each bug must cite at least one test case that revealed it.
 
 **Checkout0:**
-- Bug 1: [Brief description] — Revealed by: [Test ID]
+- Bug 1: Book availability not updated and available copies not decremented — Revealed by: T2
+- Bug 2: Wrong return code for reference books, returns 2.0 instead of 5.0 — Revealed by: T9
+- Bug 3: Off by one warning, returns 1.1 at 7 when it should at 8 — Revealed by: T17
 
 **Checkout1:**
-- Bug 1: [Brief description] — Revealed by: [Test ID]
+- Bug 1: Patron check out list never updated — Revealed by: T2
+- Bug 2: Off by one max boundary, returns 1.1 instead of 3.2 when at max — Revealed by: T19
 
 **Checkout2:**
-- Bug 1: [Brief description] — Revealed by: [Test ID]
+- Bug 1: Availability check skipped, returns success for book with no availability — Revealed by: T1
+- Bug 2: Renewal not shown, returns success instead of 0.1 when already has book — Revealed by: T11
+- Bug 3: Off by one max boundary, returns 1.1 instead of 3.2 when at max — Revealed by: T19
 
 **Checkout3:**
-- Bug 1: [Brief description] — Revealed by: [Test ID]
+- Bug 1: Off by one warning, returns 1.1 at 7 when it should at 8 — Revealed by: T17
+- Bug 2: Overdue warning not sent, returns success instead of 1.1 when there's 2 overdue books — Revealed by: T21
+- Bug 3: Renewal still decrements available copies — Revealed by: T11
 
 ### Comparative Analysis
 Compare the four implementations:
@@ -215,6 +244,9 @@ Compare the four implementations:
 - Which implementation would you use if you had to choose?
 - Why? Justify your choice considering bug severity and frequency.
 
+- The worst bug is checkout1 bug1, it causes another 12 failures just from the one bug, it lets books be forever checked out and not assigned
+- Checkout3
+- It only has 3 minor bugs that don't really cause many issues for other processes. The renewal decrementing is an issue, but not major compared to the other 3
 ---
 
 ## Part 5: Reflection
@@ -229,4 +261,4 @@ Compare the four implementations:
 - I went off of the throw codes and tried to associate a ep to each one, and then each ep that had a number change I assigned a bva to.
 
 **Describe one test where checking only the return value would NOT have been sufficient to detect a bug.**
-
+- T2 caught the issue on checkout0 where the method returned success, but if we didn't check book.IsAvailable, it would have been sent through as no issue.
