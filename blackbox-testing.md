@@ -79,7 +79,7 @@ Do **not** put everything into one table.
 | EP 7.1       | Null   | Invalid       | book == null    | 2.1             | Checkout Rejected    |
 | EP 7.2       | Exists | Valid         | book != null    | Success         | Continues Validation |
 
-### Table 8: Book Type
+### Table 8: Book Reference
 | Partition ID | State              | Valid/Invalid | Input Condition                 | Expected Return | Expected Behavior    |
 |--------------|--------------------|---------------|---------------------------------|-----------------|----------------------|
 | EP 8.1       | Reference only     | Invalid       | book.isReferenceOnly() == true  | 5.0             | Checkout Rejected    |
@@ -149,10 +149,30 @@ At least some of your tests should verify observable state changes, not just ret
 
 **Checkout0-3 Columns:** Mark each implementation as Pass (✓) or Fail (✗) for this test case. This helps you track which implementations have bugs and will be useful for Part 4 analysis.
 
-| Test ID Name | EP/BVA | Input Description | Expected Return | Expected State Changes | Checkout0 | Checkout1 | Checkout2 | Checkout3 |
-|--------------|--------|-------------------|-----------------|------------------------|-----------|-----------|-----------|-----------|
-| T1 testUnavailableBook | EP 1.1 | Book unavailable (0 copies), eligible patron | 2.0 | No state change | ✓ | ✓ | ✗ | ✓ |
-| T2 testBookAvailable | EP 1.2 | Book available (1+ copies), eligible patron, no warnings normal checkout | 0.0 | Patron map updated; copies of book change | ✗ | ✗ | ✓ | ✓ |
+| Test ID Name                 | EP/BVA  | Input Description                                                        | Expected Return | Expected State Changes                           | Checkout0 | Checkout1 | Checkout2 | Checkout3 |
+|------------------------------|---------|--------------------------------------------------------------------------|-----------------|--------------------------------------------------|-----------|-----------|-----------|-----------|
+| T1 testUnavailableBook       | EP 1.1  | Book unavailable (0 copies), eligible patron                             | 2.0             | No state change                                  | ✓         | ✓         | ✗         | ✓         |
+| T2 testBookAvailable         | EP 1.2  | Book available (1+ copies), eligible patron, no warnings normal checkout | 0.0             | Patron map updated; copies of book change        | ✗         | ✗         | ✓         | ✓         |
+| T3 testPatronNull            | EP 2.1  | Patron doesn't exist (null)                                              | 3.1             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T4 testPatronExists          | EP 2.2  | Patron exists                                                            | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T5 testPatronSuspended       | EP 3.1  | Patron suspended                                                         | 3.0             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T6 testPatronActive          | EP 3.2  | Patron is active                                                         | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T7 testBookNull              | EP 7.1  | Book doesn't exist                                                       | 2.1             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T8 testBookExists            | EP 7.2  | Book exists                                                              | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T9 testReferenceOnly         | EP 8.1  | Book is reference only                                                   | 5.0             | No state change                                  | ✗         | ✓         | ✓         | ✓         |
+| T10 testNotReference         | EP 8.2  | Book isn't reference only                                                | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T11 testHasBook              | EP 10.1 | Patron has book                                                          | 0.1             | Due date updated                                 | ✓         | ✓         | ✗         | ✗         |
+| T12 testDoesntHaveBook       | EP 10.2 | Patron doesn't have book                                                 | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T13 testBelowFineLimit       | BVA 2.1 | Well below fine limit (under $9.99)                                      | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T14 testWarningFineLimit     | BVA 2.2 | Close to fine limit (at $9.99)                                           | 0.0             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T15 testAtFineLimit          | BVA 2.3 | At fine limit (at $10)                                                   | 4.1             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T16 testAboveFineLimit       | BVA 2.4 | Above fine limit (above $10)                                             | 4.1             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T17 testBelowCheckoutLimit   | BVA 3.1 | Well below student checkout limit (under 8)                              | 0.0             | Booked added to checked list, available copies -1 | ✗         | ✗         | ✓         | ✗         |
+| T18 testWarningCheckoutLimit | BVA 3.2 | Close to student checkout limit (at 8)                                   | 1.1             | Booked added to checked list, available copies -1 | ✓         | ✗         | ✓         | ✓         |
+| T19 testAtCheckoutLimit      | BVA 3.3 | At student checkout limit (at 10)                                        | 3.2             | No state change                                  | ✓         | ✗         | ✗         | ✓         |
+| T20 testAboveCheckoutLimit   | BVA 3.4 | Above student checkout limit (above 10)                                  | 3.2             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
+| T21 testOverdueWarning       | EP 4.2  | Student with =<2 overdue books                                           | 1.0             | Booked added to checked list, available copies -1| ✓         | ✗         | ✓         | ✗         |
+| T22 testOverdueLimit         | EP 4.3  | Student with 3 or more overdue books                                     | 4.0             | No state change                                  | ✓         | ✓         | ✓         | ✓         |
 
 (Add rows until you have at least 20.)
 
@@ -168,11 +188,11 @@ List any easter egg messages you observed:
 ### Implementation Results
 
 | Implementation | Bugs Found (count) |
-|----------------|---------------------|
-| Checkout0      | |
-| Checkout1      | |
-| Checkout2      | |
-| Checkout3      | |
+|----------------|--------------------|
+| Checkout0      | 3                  |
+| Checkout1      | 2                  |
+| Checkout2      | 3                  |
+| Checkout3      | 3                  |
 
 ### Bugs Discovered
 List distinct bugs you identified for each implementation. Each bug must cite at least one test case that revealed it.
@@ -200,10 +220,13 @@ Compare the four implementations:
 ## Part 5: Reflection
 
 **Which testing technique was most effective for finding bugs?**
+- BVA was best, there was a lot of one-off errors that ep's wouldn't check for.
 
 **What was the most challenging aspect of this assignment?**
+- It was just a lot of work, there were a ton of eps to be included, and writing out 20 full tests is a lot.
 
 **How did you decide on your EP and BVA?**
+- I went off of the throw codes and tried to associate a ep to each one, and then each ep that had a number change I assigned a bva to.
 
 **Describe one test where checking only the return value would NOT have been sufficient to detect a bug.**
 
