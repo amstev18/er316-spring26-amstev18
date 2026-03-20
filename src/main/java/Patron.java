@@ -127,10 +127,6 @@ public class Patron {
         this.fines = 0.0;
     }
 
-    public boolean chkSuspended() {
-        return this.suspended;
-    }
-
     // Setters
     public void setAccountSuspended(boolean suspended) {
         this.suspended = suspended;
