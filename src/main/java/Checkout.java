@@ -10,7 +10,23 @@ import java.util.Map;
  * Handles book checkouts, returns, renewals, and fine calculations.
  */
 public class Checkout {
-    public static double MAX_FINE_AMOUNT = 25.0;
+    public static final double MAX_FINE_AMOUNT = 25.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double FINE_WARNING_AMOUNT = 10.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final int OVERDUE_MAX = 3; //SER316 TASK 2 SPOTBUGS FIX
+    public static final int WEEK = 7; //SER316 TASK 2 SPOTBUGS FIX
+
+    public static final double SUCCESS = 0.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double SUCCESS_RENEWAL = 0.1; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double SUCCESS_WARNING = 1.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double SUCCESS_LIMIT = 1.1; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_BOOK_UNAVAILABLE = 2.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_BOOK_NULL = 2.1; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_ACCOUNT_SUSPENDED = 3.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_PATRON_NULL = 3.1; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_PATRON_LIMIT = 3.2; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_PATRON_OVERDUE = 4.0; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_PATRON_FINES = 4.1; //SER316 TASK 2 SPOTBUGS FIX
+    public static final double ERROR_REFERENCE_ONLY = 5.0; //SER316 TASK 2 SPOTBUGS FIX
 
     private Map<String, Book> bookList; // ISBN -> Book
     private Map<String, Patron> patrons; // PatronID -> Patron
@@ -65,16 +81,16 @@ public class Checkout {
      */
     public double validatePatronEligibility(Patron patron) {
         if (patron == null) {
-            return 3.1;
+            return ERROR_PATRON_NULL; //SER316 TASK 2 SPOTBUGS FIX
         }
         if (patron.isAccountSuspended()) {
-            return 3.0;
+            return ERROR_ACCOUNT_SUSPENDED; //SER316 TASK 2 SPOTBUGS FIX
         }
-        if (patron.getOverdueCount() >= 3) {
-            return 4.0;
+        if (patron.getOverdueCount() >= OVERDUE_MAX) {
+            return ERROR_PATRON_OVERDUE; //SER316 TASK 2 SPOTBUGS FIX
         }
-        if (patron.getFineBalance() >= 10.0) {
-            return 4.1;
+        if (patron.getFineBalance() >= FINE_WARNING_AMOUNT) {
+            return ERROR_PATRON_FINES; //SER316 TASK 2 SPOTBUGS FIX
         }
         return 0.0; // Eligible
     }
@@ -92,10 +108,12 @@ public class Checkout {
      *
      * Return codes:
      *   0.0 - Success, book checked out normally
-     *   0.1 - Success, renewal (patron already had this book, renewal sets the due date to (today + patron.getLoanPeriodDays()).)
+     *   0.1 - Success, renewal (patron already had this book, renewal sets the due date to
+     *          (today + patron.getLoanPeriodDays()).) //SER316 TASK 2 SPOTBUGS FIX
      *   1.0 - Success with warning (patron has 1-2 overdue books)
      *   1.1 - Success with warning (patron within 2 of max checkout limit after this checkout)
-     *        Max limits: FACULTY=20 (e.g. warning at 18, 19, 20 including current checkout), STAFF=15, STUDENT=10, PUBLIC=5, CHILD=3
+     *        Max limits: FACULTY=20 (e.g. warning at 18, 19, 20 including current checkout), STAFF=15,
+     *         STUDENT=10, PUBLIC=5, CHILD=3 //SER316 TASK 2 SPOTBUGS FIX
      *   2.0 - Book unavailable (all copies checked out)
      *   2.1 - Book is null
      *   3.0 - Patron account is suspended
@@ -118,7 +136,8 @@ public class Checkout {
      *   5. If not-renewal
      *      5.1. Check if book is available (2.0)
      *      5.2. Check if patron is at max checkout limit (3.2)
-     *      5.3. Process checkout (update patron checkedOutBooks, call book.checkout()), then determine success code (priority 1.0, then 1.1, else 0.0)
+     *      5.3. Process checkout (update patron checkedOutBooks, call book.checkout()),
+     *            then determine success code (priority 1.0, then 1.1, else 0.0) //SER316 TASK 2 SPOTBUGS FIX
      *
      *
      * Success non-renewal:
@@ -126,12 +145,17 @@ public class Checkout {
      *   - book.checkout() will be called reducing the availability by 1
      *
      * Success renewal:
-     *  - patron.getCheckedOutBooks() is updated to today + loanPeriodDays; book.checkout() is not called; available copies do not change.
+     *  - patron.getCheckedOutBooks() is updated to today + loanPeriodDays; book.checkout() is not called;
+     *     available copies do not change. //SER316 TASK 2 SPOTBUGS FIX
      *
      * Additional notes:
-     *  - getCheckoutCount() refers to the number of books currently checked out (size of the patron's checked-out collection), not lifetime transactions; renewals do not increase this count.
-     *  - For any non-success return code (2.x–5.x), neither the patron's checked-out books nor the book's available copies should change.
-     *  - Tests may assume due dates equal LocalDate.now().plusDays(patron.getLoanPeriodDays()) on the day the test runs.
+     *  - getCheckoutCount() refers to the number of books currently checked out (size of the patron's
+     *     checked-out collection), not lifetime transactions; renewals do not increase this count.
+     *     //SER316 TASK 2 SPOTBUGS FIX
+     *  - For any non-success return code (2.x–5.x), neither the patron's checked-out books nor the book's available
+     *     copies should change. //SER316 TASK 2 SPOTBUGS FIX
+     *  - Tests may assume due dates equal LocalDate.now().plusDays(patron.getLoanPeriodDays()) on the day the
+     *     test runs. //SER316 TASK 2 SPOTBUGS FIX
      *  - A book is unavailable if and only if book.getAvailableCopies() <= 0 (i.e., book.isAvailable() is false).
      *  - Console output (including Easter eggs) is non-functional and should not be asserted in tests.
      *
@@ -146,23 +170,23 @@ public class Checkout {
         }
 
         if (book == null) {
-            return 2.1;
+            return ERROR_BOOK_NULL; //SER316 TASK 2 SPOTBUGS FIX
         }
 
         if (book.isReferenceOnly()) {
-            return 5.0;
+            return ERROR_REFERENCE_ONLY; //SER316 TASK 2 SPOTBUGS FIX
         }
 
         if (patron.hasBookCheckedOut(book.getIsbn())) {
-            return 0.1;
+            return SUCCESS_RENEWAL; //SER316 TASK 2 SPOTBUGS FIX
         }
         else {
             if (!book.isAvailable()) {
-                return 2.0;
+                return ERROR_BOOK_UNAVAILABLE; //SER316 TASK 2 SPOTBUGS FIX
             }
 
             if (patron.getMaxCheckoutLimit() <= patron.getCheckoutCount()) {
-                return 3.2;
+                return ERROR_PATRON_LIMIT; //SER316 TASK 2 SPOTBUGS FIX
             }
         }
 
@@ -171,11 +195,11 @@ public class Checkout {
         book.checkout();
 
         if (patron.getOverdueCount() > 0) {
-            return 1.0;
+            return SUCCESS_WARNING; //SER316 TASK 2 SPOTBUGS FIX
         }
 
         if (patron.getCheckoutCount() >= patron.getMaxCheckoutLimit() - 1) {
-            return 1.1;
+            return SUCCESS_LIMIT; //SER316 TASK 2 SPOTBUGS FIX
         }
 
         return 0.0;
@@ -210,18 +234,18 @@ public class Checkout {
         double fine = 0.0;
 
         // First 7 days: $0.25/day
-        int days1 = Math.min(numOfDays, 7);
+        int days1 = Math.min(numOfDays, WEEK); //SER316 TASK 2 SPOTBUGS FIX
         fine += days1 * 0.25;
 
         // Days 8-14: $0.50/day
-        if (numOfDays > 7) {
-            int days2 = Math.min(numOfDays - 7, 7);
+        if (numOfDays > WEEK) { //SER316 TASK 2 SPOTBUGS FIX
+            int days2 = Math.min(numOfDays - WEEK, WEEK); //SER316 TASK 2 SPOTBUGS FIX
             fine += days2 * 0.50;
         }
 
         // Days 15+: $1.00/day
-        if (numOfDays > 14) {
-            int days3 = numOfDays - 14;
+        if (numOfDays > WEEK * 2) { //SER316 TASK 2 SPOTBUGS FIX
+            int days3 = numOfDays - WEEK * 2; //SER316 TASK 2 SPOTBUGS FIX
             fine += days3 * 1.00;
         }
 
