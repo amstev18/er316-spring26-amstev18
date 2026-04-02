@@ -31,19 +31,19 @@ public class CheckoutBlackBoxSample {
      * Each test will run against ALL implementations.
      */
     @SuppressWarnings("unchecked")
-    static Stream<Class<? extends Checkout>> checkoutClassProvider() {
-        return (Stream<Class<? extends Checkout>>) Stream.of(
-                Checkout0.class,
-                Checkout1.class,
-                Checkout2.class,
-                Checkout3.class
-        );
-    }
+//    static Stream<Class<? extends Checkout>> checkoutClassProvider() {
+//       return (Stream<Class<? extends Checkout>>) Stream.of(
+//                Checkout0.class,
+//                Checkout1.class,
+//                Checkout2.class,
+//                Checkout3.class
+//        );
+//    }
 
     // Uncomment when you implement the method in assign 3 and comment the above
-//    static Stream<Class<? extends Checkout>> checkoutClassProvider() {
-//        return Stream.of(Checkout.class);
-//    }
+    static Stream<Class<? extends Checkout>> checkoutClassProvider() {
+        return Stream.of(Checkout.class);
+    }
 
 
     /**
