@@ -28,9 +28,9 @@ public class Checkout {
     public static final double ERROR_PATRON_FINES = 4.1; 
     public static final double ERROR_REFERENCE_ONLY = 5.0; 
 
-    private Map<String, Book> bookList; // ISBN -> Book
-    private Map<String, Patron> patrons; // PatronID -> Patron
-    private List<Transaction> history; //
+    private final Map<String, Book> bookList; // ISBN -> Book
+    private final Map<String, Patron> patrons; // PatronID -> Patron
+    private final List<Transaction> history; //
 
     /**
      * Inner class to track checkout transactions.
@@ -369,7 +369,7 @@ public class Checkout {
             return 0;
         }
 
-        int looped = 0;
+        int count = 0;
 
         // Loop through all books in inventory
         for (Book b : bookList.values()) {
@@ -384,16 +384,16 @@ public class Checkout {
                 if (onlyAvailable) {
                     // Only count if book has available copies
                     if (b.isAvailable()) {
-                        looped++;
+                        count++;
                     }
                 } else {
                     // Count all books of this type regardless of availability
-                    looped++;
+                    count++;
                 }
             }
         }
 
-        return looped;
+        return count;
     }
 
     public Map<String, Book> getInventory() {
