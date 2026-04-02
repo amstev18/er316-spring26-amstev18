@@ -303,7 +303,7 @@ public class Checkout {
             return false;
         }
 
-        return typeString == expectedType.toString();
+        return typeString.equals(expectedType.toString());  //SER316 TASK 2 SPOTBUGS FIX
     }
 
     /**
@@ -397,10 +397,10 @@ public class Checkout {
     }
 
     public Map<String, Book> getInventory() {
-        return bookList;
+        return new HashMap<>(bookList);  //SER316 TASK 2 SPOTBUGS FIX
     }
 
     public Map<String, Patron> getPatrons() {
-        return patrons;
+        return new HashMap<>(patrons);  //SER316 TASK 2 SPOTBUGS FIX
     }
 }
