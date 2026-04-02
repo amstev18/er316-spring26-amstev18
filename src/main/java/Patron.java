@@ -127,10 +127,6 @@ public class Patron {
         this.fines = 0.0;
     }
 
-    public boolean chkSuspended() {
-        return this.suspended;
-    }
-
     // Setters
     public void setAccountSuspended(boolean suspended) {
         this.suspended = suspended;
@@ -216,6 +212,7 @@ public class Patron {
 
     @Override
     public String toString() {
-        return patronId+"-"+name+"("+type+")"+"[Books:"+bookMap.size()+"/"+getMaxCheckoutLimit()+",Fines:$"+ fines +"]";
+        return patronId + "-" + name + "(" + type + ")" + "[Books:" + bookMap.size()
+                + "/" + getMaxCheckoutLimit() + ",Fines:$" + fines +"]";
     }
 }
