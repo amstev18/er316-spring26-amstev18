@@ -13,7 +13,13 @@ public class Checkout {
     public static final double MAX_FINE_AMOUNT = 25.0; 
     public static final double FINE_WARNING_AMOUNT = 10.0; 
     public static final int OVERDUE_MAX = 3; 
-    public static final int WEEK = 7; 
+    public static final int WEEK = 7;
+
+    public static final double FINE_RATE_1 = 0.25;
+    public static final double FINE_RATE_2 = 0.50;
+    public static final double FINE_RATE_3 = 1.00;
+
+    public static final double FINE_MULTIPLIER = 2.0;
 
     public static final double SUCCESS = 0.0; 
     public static final double SUCCESS_RENEWAL = 0.1; 
@@ -235,23 +241,23 @@ public class Checkout {
 
         // First 7 days: $0.25/day
         int days1 = Math.min(numOfDays, WEEK); 
-        fine += days1 * 0.25;
+        fine += days1 * FINE_RATE_1;
 
         // Days 8-14: $0.50/day
         if (numOfDays > WEEK) { 
             int days2 = Math.min(numOfDays - WEEK, WEEK); 
-            fine += days2 * 0.50;
+            fine += days2 * FINE_RATE_2;
         }
 
         // Days 15+: $1.00/day
         if (numOfDays > WEEK * 2) { 
             int days3 = numOfDays - WEEK * 2; 
-            fine += days3 * 1.00;
+            fine += days3 * FINE_RATE_3;
         }
 
         // Double rate for REFERENCE and TEXTBOOK
         if (bookType == Book.BookType.REFERENCE || bookType == Book.BookType.TEXTBOOK) {
-            fine *= 2.0;
+            fine *= FINE_MULTIPLIER;
         }
 
         // Cap at maximum fine amount
