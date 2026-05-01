@@ -322,6 +322,20 @@ public class Checkout {
     }
 
     /**
+     * Processes a book return with a book object.
+     *
+     * @param book The book being returned.
+     * @param patron The patron returning the book.
+     * @return Fine amount charged (0.0 if not overdue)
+     */
+    public double returnBook(Book book, Patron patron) {
+        if (book == null) {
+            throw new IllegalArgumentException("book can't be null");
+        }
+        return returnBook(book.getIsbn(), patron);
+    }
+
+    /**
      * Processes a book return.
      * Calculates any overdue fines and updates patron/book status.
      *
