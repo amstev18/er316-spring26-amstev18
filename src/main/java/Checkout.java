@@ -64,10 +64,16 @@ public class Checkout {
     }
 
     public void addBook(Book book) {
+        if (book == null) {
+            throw new IllegalArgumentException("book can't be null");
+        }
         bookList.put(book.getIsbn(), book);
     }
 
     public void registerPatron(Patron patron) {
+        if (patron == null) {
+            throw new IllegalArgumentException("patron can't be null");
+        }
         patrons.put(patron.getPatronId(), patron);
     }
 
@@ -233,6 +239,9 @@ public class Checkout {
      * @return Fine amount in dollars
      */
     public double calculateFine(int numOfDays, Book.BookType bookType) {
+        if (bookType == null) {
+            throw new IllegalArgumentException("bookType can't be null");
+        }
         if (numOfDays <= 0) {
             return 0.0;
         }
@@ -321,6 +330,10 @@ public class Checkout {
      * @return Fine amount charged (0.0 if not overdue)
      */
     public double returnBook(String isbn, Patron patron) {
+        if (isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("isbn cant be null or blank");
+        }
+
         if (patron == null || !patron.hasBookCheckedOut(isbn)) {
             return -1.0;
         }
